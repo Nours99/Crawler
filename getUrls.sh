@@ -19,4 +19,8 @@ if [ $COUNT -eq 0 ]; then
     exit 3
 fi
 
-#wget -q -O - $1
+wget -q -O - $1 | grep -i -E -o "$URL_REGEX"
+
+if [ $? -ne 0 ]; then
+    echo "Error, cannot found data."
+fi

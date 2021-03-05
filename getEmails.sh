@@ -10,8 +10,19 @@ if [ $# -gt 1 ]; then
     exit 2
 fi
 
-EMAIL_REGEX='([a-z0-9]+\.?)+@[a-z0-9]+\.[a-z]{2,}'
+URL_REGEX='((https?:)?\/\/)?((([a-z0-9\-_]+\.)+[a-z]{2,})|(([0-9]{1,3}\.){3}[0-9]{1,3}))(\/[a-z0-9\-_]+)*\/?'
 
-echo "$1" | grep $EMAIL_REGEX $1
+COUNT=`echo "$1" | grep -i -E -o "$URL_REGEX" | wc -l`
 
-#wget -q -O - $1
+if [ $COUNT -eq 0 ]; then
+    echo "Not a valid URL."
+    exit 3
+fi
+
+EMAIL_REGEX='([a-z0-9_]+([\.-][a-z0-9])?)+@[a-z0-9]+\.[a-z]{2,}'
+
+wget -q -O - $1 | grep -i -E -o "$EMAIL_REGEX"
+
+if [ $? -ne 0 ]; then
+    echo "Error, cannot found data."
+fi
